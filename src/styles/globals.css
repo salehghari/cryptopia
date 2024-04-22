@@ -11,6 +11,7 @@
   --primary-bg-color: #000814;
   --secondary-bg-color: #003566;
   --link-color: #256ab4;
+  -webkit-tap-highlight-color: transparent;
   --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
 }
 

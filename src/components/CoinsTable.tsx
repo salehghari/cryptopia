@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { separator } from './Banner/Carousel';
+import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 
 export default function CoinsTable() {
   const [perPage, setPerPage] = useState(10);
@@ -92,10 +94,15 @@ export default function CoinsTable() {
 
   const handleSearch = () => {
     return allCoins.filter((coin: { name: string; symbol: string; }) => (
-      coin.name.toLowerCase().includes(search) ||
-      coin.symbol.toLowerCase().includes(search)
+      coin.name.toLowerCase().includes(search.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(search.toLowerCase())
     ))
-  }  
+  }
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      dispatch(setPage(pageInput));
+    }
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -121,6 +128,7 @@ export default function CoinsTable() {
             InputLabelProps={{
               shrink: true,
             }}
+            onKeyDown={handleKeyDown}
             onChange={(e: any) => {
               if(e.target.value <= 0 || !numberOfCoins) {
                 e.target.value = ""
@@ -130,9 +138,15 @@ export default function CoinsTable() {
               }
               setPageInput(e.target.value)
             }}
-            InputProps={{endAdornment: <Button className="min-w-[auto] w-16" variant="text" onClick={() => dispatch(
-              setPage(pageInput)
-            )}>Go</Button>}}
+            InputProps={{endAdornment: 
+              <Button
+                className="min-w-[auto] w-16"
+                variant="text"
+                onClick={() => dispatch(setPage(pageInput))}
+              >
+                Go
+              </Button>
+            }}
           />
         </div>
         <TableContainer className="rounded-sm">
@@ -182,19 +196,22 @@ export default function CoinsTable() {
                         {row.current_price && 
                           <>
                             <span className="text-gray-500 mr-[1px]">{symbol}</span>
-                            {separator(row.current_price?.toFixed(2))}
+                            {separator(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
                           </>
                         }
                         {!row.current_price && "-"}
                       </TableCell>
                       <TableCell
                         align="right"
-                        className={`font-medium ${ profit ? "text-green-600" : "text-red-600"}`}
+                        className={`font-medium ${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
                       >
                         {row.price_change_percentage_24h &&
                           <>
-                            {profit && "+"}
-                            {row.price_change_percentage_24h?.toFixed(2)}%
+                            {profit && <ArrowDropUpRoundedIcon className="mr-[-4px]" />}
+                            {!profit && <ArrowDropDownRoundedIcon className="mr-[-4px]" />}
+                            {row.price_change_percentage_24h.toFixed(2)
+                            .toString()
+                            .replace("-", "")}%
                           </>
                         }
                         {!row.price_change_percentage_24h && "-"}

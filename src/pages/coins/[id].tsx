@@ -4,7 +4,7 @@ import { setCoin, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from '@/app/store';
 import axios from 'axios';
 import { SingleCoin } from '@/config/api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
 import { LinearProgress, Typography } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
@@ -15,6 +15,8 @@ import { separator } from '@/components/Banner/Carousel';
 export default function CoinPage() {
   const dispatch = useDispatch();
 
+  const [showMore, setShowMore] = useState(false);
+
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
@@ -23,6 +25,8 @@ export default function CoinPage() {
   const symbol = useSelector((state: RootState) => state.crypto.symbol);
   const loading = useSelector((state: RootState) => state.crypto.loading.singleCoin);
 
+  const coinMarketCap = coin?.market_data?.market_cap[currency.toLowerCase()];
+  const coinCurrentPrice = coin?.market_data?.current_price[currency.toLowerCase()];
 
   const fetchCoin = async () => {
     dispatch(setSingleCoinLoading(true));
@@ -35,12 +39,21 @@ export default function CoinPage() {
     }
   }
 
-  console.log(coin);
+  console.log(coinCurrentPrice);
   
 
   useEffect(() => {
     fetchCoin();
   }, [id])
+  
+  const marketCap = () => {
+    if(coinMarketCap >= 1000000) {
+      return `${separator(coinMarketCap.toString().slice(0, -6))}M`
+    }
+    else if(coinMarketCap < 1000000) {
+      return separator(coinMarketCap)
+    }
+  }
   
   return (
     <>
@@ -53,13 +66,14 @@ export default function CoinPage() {
               alt={ coin.name }
               className="mb-5 h-[200px]"
             />
-            <Typography variant="h3" className="font-bold mb-5">
+            <Typography variant="h3" className="font-bold mb-5 text-center">
               { coin.name }
             </Typography>
             <Typography variant="subtitle1" className="w-full p-6 pb-4 pt-0 text-justify" style={{fontFamily: "Montserrat"}}>
               {coin.description?.en &&
                 <>
-                  {HTMLReactParser(`${coin.description?.en.split(". ")[0]}`)}.
+                  {showMore ? HTMLReactParser(`${coin.description?.en}`) : HTMLReactParser(`${coin.description?.en.split(". ")[0]}`)}
+                  {coin.description?.en.split(". ")[1] && <span className="text-gray-500 active:bg-gray-700 cursor-pointer" onClick={() => setShowMore(!showMore)}>{showMore ? " ...see less" : "...see more"}</span>}
                 </>
               }
               {!coin.description?.en && "No Description"}
@@ -95,10 +109,15 @@ export default function CoinPage() {
                   variant="h5"
                   style={{ fontFamily: "Montserrat" }}
                 >
-                  {symbol}
-                  {separator(
-                    coin?.market_data?.current_price[currency.toLowerCase()]
-                  )}
+                  {coinCurrentPrice &&
+                    <>
+                      {symbol}
+                      {separator(
+                        coinCurrentPrice
+                      )}
+                    </>
+                  }
+                  {!coinCurrentPrice && "-"}
                 </Typography>
               </span>
               <span style={{ display: "flex" }}>
@@ -114,13 +133,13 @@ export default function CoinPage() {
                   variant="h5"
                   style={{ fontFamily: "Montserrat" }}
                 >
-                  {symbol}
-                  {separator(
-                    coin?.market_data?.market_cap[currency.toLowerCase()]
-                      .toString()
-                      .slice(0, -6)
-                  )}
-                  M
+                  {coinMarketCap &&
+                    <>
+                      {symbol}
+                      {marketCap()}
+                    </>
+                  }
+                  {!coinMarketCap && coinMarketCap !== 0 && "-"}
                 </Typography>
               </span>
             </div>

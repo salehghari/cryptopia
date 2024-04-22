@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import AliceCarousel from 'react-alice-carousel';
 import Link from 'next/link';
 import { RootState } from "@/app/store";
+import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 
 
 export function separator(number: number) {
@@ -63,11 +65,9 @@ export default function Carousel() {
     return (
       <Link className="flex flex-col items-center justify-between cursor-pointer uppercase text-white h-[135px]" href={`/coins/${trendingCoin.id}`}>
         <img
-          className="mb-2"
+          className="mb-2 h-20 w-20"
           src={trendingCoin?.image}
           alt={trendingCoin.name}
-          height="80"
-          width="80"
         />
         {loading && 
           <div className="flex flex-col items-center gap-2">
@@ -80,10 +80,14 @@ export default function Carousel() {
             <span>{trendingCoin?.symbol}
               &nbsp;
               <span className={profit ? `text-green-500` : `text-red-500`}>
-                {profit && "+"}{trendingCoin?.price_change_percentage_24h?.toFixed(2)}%
+                {profit && <ArrowDropUpRoundedIcon className="mr-[-4px]" />}
+                {!profit && <ArrowDropDownRoundedIcon className="mr-[-4px]" />}
+                {trendingCoin?.price_change_percentage_24h?.toFixed(2)
+                .toString()
+                .replace("-", "")}%
               </span>
             </span><span className="text-xl font-medium">
-              {symbol}{separator(trendingCoin?.current_price.toFixed(2))}
+              {symbol}{separator(trendingCoin?.current_price.toFixed(2).replace(/\.0+$/,''))}
             </span>
           </>
         }
