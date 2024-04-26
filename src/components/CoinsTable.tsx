@@ -149,8 +149,8 @@ export default function CoinsTable() {
             }}
           />
         </div>
-        <TableContainer className="rounded-sm">
-          {loading && <LinearProgress className="mb-4" style={{ backgroundColor: "#003566" }}></LinearProgress>}
+        <TableContainer className="rounded-sm pb-5">
+          {loading && <LinearProgress style={{ backgroundColor: "#003566" }}></LinearProgress>}
           {!loading &&
             <Table>
               <TableHead className="secondary-bg">
