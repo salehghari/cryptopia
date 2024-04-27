@@ -7,16 +7,14 @@ interface Props {
 
 export default function SelectButton({ children, selected, onClick }: Props) {
 
-
-
   return (
     <span 
       onClick={onClick}
       className="w-[24%] max-sm:w-full p-2 rounded cursor-pointer text-center"
       style={{
         fontFamily: "Montserrat",
-        backgroundColor: selected ? "#256ab4" : "",
-        color: selected ? "black" : "",
+        backgroundColor: selected ? "#256ab4" : "transparent",
+        color: selected ? "#000" : "#fff",
         fontWeight: selected ? 700 : 500,
         border: selected ? "2px solid transparent" : "2px solid #003566",
       }}

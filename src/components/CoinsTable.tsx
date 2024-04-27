@@ -1,5 +1,5 @@
 import { RootState } from '@/app/store';
-import { CoinList, allCoinsList, options } from '@/config/api';
+import { CoinList, GlobalData, options } from '@/config/api';
 import { setAllCoins, setAllCoinsLoading, setPage, setSearch } from '@/features/crypto/cryptoSlice';
 import { Button, Container, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
 import axios from 'axios';
@@ -13,7 +13,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 export default function CoinsTable() {
   const [perPage, setPerPage] = useState(10);
   const [pageInput, setPageInput] = useState(1);
-  const [numberOfCoins, setNumberOfCoins] = useState(0);
+  const [globalData, setGlobalData] = useState(0);
 
 
 
@@ -31,9 +31,10 @@ export default function CoinsTable() {
   const search = useSelector((state: RootState) => state.crypto.search);
 
 
-  const fetchNumberOfCoins = async () => {
-    const { data } = await axios.get(allCoinsList(), options)
-    setNumberOfCoins(data.length);
+  const fetchGlobalData = async () => {
+    const { data } = await axios.get(GlobalData(), options)
+    setGlobalData(data.data.active_cryptocurrencies);
+    console.log(data);
   }
 
   const fetchAllCoins = async () => {
@@ -55,7 +56,7 @@ export default function CoinsTable() {
   }, [page])
 
   useEffect(() => {
-    fetchNumberOfCoins()
+    fetchGlobalData()
   }, [])
 
   
@@ -66,7 +67,7 @@ export default function CoinsTable() {
     
     if (offsetHeight - (innerHeight + scrollTop) <= 10 && router.pathname === "/" && !loading) {
       setPerPage(perPage + 10);
-      if (perPage === 100 && page < Number((numberOfCoins / 100).toFixed()) - 1) {
+      if (perPage === 100 && page < Number((globalData / 100).toFixed()) + 1) {
         dispatch(setPage(Number(page) + 1));
         setPerPage(10);
         window.scrollTo({
@@ -130,11 +131,11 @@ export default function CoinsTable() {
             }}
             onKeyDown={handleKeyDown}
             onChange={(e: any) => {
-              if(e.target.value <= 0 || !numberOfCoins) {
+              if(e.target.value <= 0 || !globalData) {
                 e.target.value = ""
               }
-              if(e.target.value > Number((numberOfCoins / 100).toFixed()) - 1) {
-                e.target.value = Number((numberOfCoins / 100).toFixed()) - 1
+              if(e.target.value > Number((globalData / 100).toFixed()) + 1) {
+                e.target.value = Number((globalData / 100).toFixed()) + 1
               }
               setPageInput(e.target.value)
             }}

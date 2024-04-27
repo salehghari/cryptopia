@@ -6,7 +6,7 @@ import axios from 'axios';
 import { SingleCoin } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
-import { Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
 import { separator } from '@/components/Banner/Carousel';
 
@@ -55,10 +55,18 @@ export default function CoinPage() {
   
   return (
     <>
-      {loading && <div className="h-screen flex items-center justify-center">loading...</div>}
+      {loading && 
+        <div className="h-screen flex items-center justify-center">
+          <CircularProgress
+            style={{ color: "#256ab4" }}
+            size={100}
+            thickness={2}
+          />
+        </div>
+      }
       {!loading && 
-        <div className="flex max-lg:flex-col max-lg:items-center pt-16">
-          <div className="w-[30%] flex flex-col items-center mt-6 border-r-[1px] border-solid border-gray-300 max-lg:w-full">
+        <div className="lg:overflow-y-auto lg:h-screen flex max-lg:flex-col max-lg:items-center pt-16">
+          <div className="w-[30%] flex flex-col items-center mt-6 max-lg:w-full">
             <img
               src={ coin.image?.large }
               alt={ coin.name }

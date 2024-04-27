@@ -15,6 +15,21 @@
   --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: #000814;
+}
+::-webkit-scrollbar-track {
+  background-color: #000814;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ffffff80;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ffffff98;
+}
+
 .primary-bg {
   background-color: var(--primary-bg-color);
 }

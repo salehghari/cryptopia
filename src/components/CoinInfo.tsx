@@ -24,8 +24,9 @@ export default function CoinInfo({ coin } : Props) {
 
   const fetchHistoricData = async () => {
     if(coin.id) {
-      const { data } = await axios.get(HistoricalChart(coin.id, days, currency))
-      setHistoricData(data.prices)
+      const { data } = await axios.get(HistoricalChart(coin.id, days, currency));
+      setHistoricData(data.prices);
+      console.log(data)
     }
   }
 
@@ -46,7 +47,7 @@ export default function CoinInfo({ coin } : Props) {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className="w-3/4 flex flex-col items-center justify-center mt-6 p-10 max-lg:w-full max-lg:mt-0 max-lg:p-5 max-lg:pt-0">
+      <div className="sticky top-6 w-3/4 flex flex-col items-center justify-center mt-6 p-10 max-lg:w-full max-lg:mt-0 max-lg:p-5 max-lg:pt-0">
         {!historicData ? (
             <CircularProgress
               style={{ color: "#256ab4" }}
@@ -86,7 +87,7 @@ export default function CoinInfo({ coin } : Props) {
                   },
                 }}
               />
-              <div className="flex mt-5 justify-around w-full max-sm:grid max-sm:grid-cols-2 max-sm:gap-2">
+              <div className="flex mt-5 mb-3 justify-around w-full max-sm:grid max-sm:grid-cols-2 max-sm:gap-2">
                 {chartDays.map((day) => (
                   <SelectButton
                     key={day.value}
