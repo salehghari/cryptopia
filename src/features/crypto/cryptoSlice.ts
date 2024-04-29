@@ -2,15 +2,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface cryptoState {
   currency: string,
-  symbol: string,
+  symbol: string | null,
   trendingCoins: any[],
   allCoins: any[],
   coin: {
     [key: string]: any
   },
-  loading: { allCoins: boolean, currency: boolean, singleCoin: boolean },
+  loading: { allCoins: boolean, trendingCoins: boolean, singleCoin: boolean },
   page: number,
   search: string,
+  globalData: {
+    [key: string]: any
+  }
 }
 
 const initialState: cryptoState = {
@@ -19,9 +22,10 @@ const initialState: cryptoState = {
   trendingCoins: [],
   allCoins: [],
   coin: {},
-  loading: { allCoins: false, currency: false, singleCoin: false },
+  loading: { allCoins: false, trendingCoins: false, singleCoin: false },
   page: 1,
   search: "",
+  globalData: {},
 };
 
 const cryptoSlice = createSlice({
@@ -31,7 +35,7 @@ const cryptoSlice = createSlice({
     setCurrency: (state, action: PayloadAction<string>) => {
       state.currency = action.payload;
     },
-    setSymbol: (state, action: PayloadAction<string>) => {
+    setSymbol: (state, action: PayloadAction<string | null>) => {
       state.symbol = action.payload;
     },
     setTrendingCoins: (state, action: PayloadAction<[]>) => {
@@ -46,8 +50,8 @@ const cryptoSlice = createSlice({
     setAllCoinsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading.allCoins = action.payload;
     },
-    setCurrencyLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading.currency = action.payload;
+    setTrendingCoinsLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading.trendingCoins = action.payload;
     },
     setSingleCoinLoading: (state, action: PayloadAction<boolean>) => {
       state.loading.singleCoin = action.payload;
@@ -58,7 +62,9 @@ const cryptoSlice = createSlice({
     setSearch: (state, action: PayloadAction<string>) => {
       state.search = action.payload;
     },
-
+    setGlobalData: (state, action: PayloadAction<object>) => {
+      state.globalData = action.payload;
+    },
   }
 })
 
@@ -69,10 +75,11 @@ export const {
   setAllCoins,
   setCoin,
   setAllCoinsLoading,
-  setCurrencyLoading,
+  setTrendingCoinsLoading,
   setSingleCoinLoading,
   setPage,
-  setSearch
+  setSearch,
+  setGlobalData
 } = cryptoSlice.actions;
 
 export default cryptoSlice.reducer;

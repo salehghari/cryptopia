@@ -1,16 +1,33 @@
 import { AppBar, Container, ThemeProvider, Toolbar, Typography, createTheme } from "@mui/material";
 import { useRouter } from 'next/router';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrency, setSymbol } from "@/features/crypto/cryptoSlice";
 import { RootState } from "@/app/store";
+import { allCurrencies } from "@/config/allCurrencies";
 
+export function formatTime(date: Date) {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  const amOrPm = hours >= 12 ? 'PM' : 'AM';
+
+  const formattedHours = hours % 12 || 12;
+
+  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+  const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
+  return formattedTime;
+}
 
 export default function Header() {
+  const [formattedTime, setFormattedTime] = useState("");
 
   const router = useRouter();
 
   const dispatch = useDispatch();
+
+  const globalData = useSelector((state: RootState) => state.crypto.globalData);
 
   const darkTheme = createTheme({
     palette: {
@@ -21,40 +38,20 @@ export default function Header() {
     },
   });
 
+  useEffect(() => {
+    setFormattedTime(formatTime(new Date(globalData.data?.updated_at * 1000)));
+  }, [globalData.data?.updated_at]);
+
   const currency = useSelector((state: RootState) => state.crypto.currency);
 
-  useEffect(() => {
-    if (currency === "USD") {
-      dispatch(
-        setSymbol("$")
-      );
-    }
-    else if (currency === "INR") {
-      dispatch(
-        setSymbol("₹")
-      );
-    }
-    else if (currency === "CNY") {
-      dispatch(
-        setSymbol("¥")
-      );
-    }
-    else if (currency === "EUR") {
-      dispatch(
-        setSymbol("€")
-      );
-    }
-    else if (currency === "GBP") {
-      dispatch(
-        setSymbol("£")
-      );
-    }
-  }, [currency])
-
-
+  
+  
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" className="bg-[#000814d7] backdrop-blur-lg" position="fixed">
+        {
+          <div className="absolute m-1 text-[8px] text-gray-400">Last Update: {formattedTime}</div>
+        }
         <Container>
           <Toolbar>
             <div className="flex-1">
@@ -79,13 +76,18 @@ export default function Header() {
             <select
               className="w-1/5 p-3 my-2"
               value={currency}
-              onChange={(e) => dispatch(setCurrency(e.target.value))}
+              onChange={(e) => {
+                const selectedIndex = e.target.selectedIndex;
+                const selectedOption = e.target.options[selectedIndex];
+                dispatch(setCurrency(e.target.value))
+                dispatch(
+                  setSymbol(selectedOption.getAttribute('data-symbol'))
+                );
+              }}
             >
-              <option className="primary-bg" value={"USD"}>USD</option>
-              <option className="primary-bg" value={"EUR"}>EUR</option>
-              <option className="primary-bg" value={"GBP"}>GBP</option>
-              <option className="primary-bg" value={"INR"}>INR</option>
-              <option className="primary-bg" value={"CNY"}>CNY</option>
+              {allCurrencies.map((currency, i) => (
+                <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
+              ))}
             </select>
           </Toolbar>
         </Container>

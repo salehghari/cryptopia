@@ -1,6 +1,6 @@
 import { RootState } from '@/app/store';
 import { CoinList, GlobalData, options } from '@/config/api';
-import { setAllCoins, setAllCoinsLoading, setPage, setSearch } from '@/features/crypto/cryptoSlice';
+import { setAllCoins, setAllCoinsLoading, setPage, setSearch, setGlobalData } from '@/features/crypto/cryptoSlice';
 import { Button, Container, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -13,8 +13,6 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 export default function CoinsTable() {
   const [perPage, setPerPage] = useState(10);
   const [pageInput, setPageInput] = useState(1);
-  const [globalData, setGlobalData] = useState(0);
-
 
 
   const dispatch = useDispatch();
@@ -29,11 +27,12 @@ export default function CoinsTable() {
   const allCoins = useSelector((state: RootState) => state.crypto.allCoins);
   const page = useSelector((state: RootState) => state.crypto.page);
   const search = useSelector((state: RootState) => state.crypto.search);
+  const globalData = useSelector((state: RootState) => state.crypto.globalData);
 
 
   const fetchGlobalData = async () => {
     const { data } = await axios.get(GlobalData(), options)
-    setGlobalData(data.data.active_cryptocurrencies);
+    dispatch(setGlobalData(data));
     console.log(data);
   }
 
@@ -67,7 +66,7 @@ export default function CoinsTable() {
     
     if (offsetHeight - (innerHeight + scrollTop) <= 10 && router.pathname === "/" && !loading) {
       setPerPage(perPage + 10);
-      if (perPage === 100 && page < Number((globalData / 100).toFixed()) + 1) {
+      if (perPage === 100 && page < Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1) {
         dispatch(setPage(Number(page) + 1));
         setPerPage(10);
         window.scrollTo({
@@ -131,11 +130,11 @@ export default function CoinsTable() {
             }}
             onKeyDown={handleKeyDown}
             onChange={(e: any) => {
-              if(e.target.value <= 0 || !globalData) {
+              if(e.target.value <= 0 || !globalData.data.active_cryptocurrencies) {
                 e.target.value = ""
               }
-              if(e.target.value > Number((globalData / 100).toFixed()) + 1) {
-                e.target.value = Number((globalData / 100).toFixed()) + 1
+              if(e.target.value > Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1) {
+                e.target.value = Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1
               }
               setPageInput(e.target.value)
             }}
@@ -196,7 +195,7 @@ export default function CoinsTable() {
                       >
                         {row.current_price && 
                           <>
-                            <span className="text-gray-500 mr-[1px]">{symbol}</span>
+                            (<span className="text-gray-400 mr-[1px]">{symbol}</span>)
                             {separator(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
                           </>
                         }
@@ -223,7 +222,7 @@ export default function CoinsTable() {
                       >
                         {row.market_cap &&
                           <>
-                            <span className="text-gray-500 mr-[1px]">{symbol}</span>
+                            (<span className="text-gray-400 mr-[1px]">{symbol}</span>)
                             {separator(row.market_cap?.toString().slice(0, -6))}M
                           </>
                         }

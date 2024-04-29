@@ -80,9 +80,6 @@ a {
 .banner-content {
   height: 500px;
 }
-.text-loader {
-  background-color: #00000044;
-}
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 

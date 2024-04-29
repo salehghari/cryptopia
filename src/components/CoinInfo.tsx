@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { useSelector } from "react-redux";
 import "chart.js/auto";
-import { chartDays } from "@/config/data";
+import { chartDays } from "@/config/chartDays";
 import SelectButton from "./SelectButton";
 
 
@@ -26,7 +26,6 @@ export default function CoinInfo({ coin } : Props) {
     if(coin.id) {
       const { data } = await axios.get(HistoricalChart(coin.id, days, currency));
       setHistoricData(data.prices);
-      console.log(data)
     }
   }
 
@@ -47,7 +46,7 @@ export default function CoinInfo({ coin } : Props) {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className="sticky top-6 w-3/4 flex flex-col items-center justify-center mt-6 p-10 max-lg:w-full max-lg:mt-0 max-lg:p-5 max-lg:pt-0">
+      <div className="lg:sticky lg:top-6 w-3/4 flex flex-col items-center justify-center mt-6 p-10 max-lg:w-full max-lg:mt-0 max-lg:p-2 max-lg:pt-0">
         {!historicData ? (
             <CircularProgress
               style={{ color: "#256ab4" }}
@@ -79,10 +78,13 @@ export default function CoinInfo({ coin } : Props) {
                 }}
                 options={{
                   animation: {easing: "easeInOutQuint"},
-                  hover: {mode: "y"},
+                  hover: {mode: "y", intersect: false},
+                  aspectRatio: 1.6,
                   elements: {
                     point: {
                       radius: 1,
+                      hitRadius: 2,
+                      drawActiveElementsOnTop: false
                     },
                   },
                 }}

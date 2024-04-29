@@ -117,7 +117,7 @@ export default function CoinPage() {
                 >
                   {coinCurrentPrice &&
                     <>
-                      {symbol}
+                      ({symbol})
                       {separator(
                         coinCurrentPrice
                       )}
@@ -141,7 +141,7 @@ export default function CoinPage() {
                 >
                   {coinMarketCap &&
                     <>
-                      {symbol}
+                      ({symbol})
                       {marketCap()}
                     </>
                   }
