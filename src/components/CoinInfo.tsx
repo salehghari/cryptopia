@@ -59,10 +59,11 @@ export default function CoinInfo({ coin } : Props) {
                 data={{
                   labels: historicData?.map((coin: (string | number | Date)[]) => {
                     let date = new Date(coin[0]);
+                    const formattedMinutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
                     let time =
                       date.getHours() > 12
-                        ? `${date.getHours() - 12}:${date.getMinutes()} PM`
-                        : `${date.getHours()}:${date.getMinutes()} AM`;
+                        ? `${date.getHours() - 12}:${formattedMinutes} PM`
+                        : `${date.getHours()}:${formattedMinutes} AM`;
                     return days === 1 ? time : date.toLocaleDateString();
                   }),
                   datasets: [

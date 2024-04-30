@@ -1,9 +1,9 @@
 import { useParams } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCoin, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
+import { setCoin, setGlobalData, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from '@/app/store';
 import axios from 'axios';
-import { SingleCoin } from '@/config/api';
+import { GlobalData, SingleCoin, options } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
 import { CircularProgress, Typography } from '@mui/material';
@@ -38,15 +38,31 @@ export default function CoinPage() {
       dispatch(setSingleCoinLoading(false));
     }
   }
+  const fetchGlobalData = async () => {
+    const { data } = await axios.get(GlobalData(), options)
+    dispatch(setGlobalData(data));
+    console.log(data);
+  }
   
 
   useEffect(() => {
     fetchCoin();
   }, [id])
   
+  useEffect(() => {
+    fetchGlobalData()
+  }, [])
+  
   const marketCap = () => {
     if(coinMarketCap >= 1000000) {
-      return `${separator(coinMarketCap.toString().slice(0, -6))}M`
+      return (
+        <>
+          <span style={{ direction: 'ltr', display: 'inline-block' }}>
+            {separator(coinMarketCap.toString().slice(0, -6))}
+          </span>
+          M
+        </>
+      )
     }
     else if(coinMarketCap < 1000000) {
       return separator(coinMarketCap)
@@ -85,7 +101,7 @@ export default function CoinPage() {
               {!coin.description?.en && "No Description"}
             </Typography>
             <div className="w-full self-start p-6 pt-3 max-lg:flex max-lg:justify-around max-md:flex-col max-md:items-center max-sm:items-start">
-              <span style={{ display: "flex" }}>
+              <span className="flex flex-wrap">
                 <Typography
                   variant="h5"
                   className="font-bold mb-5"
@@ -102,7 +118,7 @@ export default function CoinPage() {
                   {separator(coin?.market_cap_rank)}
                 </Typography>
               </span>
-              <span style={{ display: "flex" }}>
+              <span className="flex flex-wrap">
                 <Typography
                   variant="h5"
                   className="font-bold mb-5"
@@ -116,17 +132,17 @@ export default function CoinPage() {
                   style={{ fontFamily: "Montserrat" }}
                 >
                   {coinCurrentPrice &&
-                    <>
-                      ({symbol})
-                      {separator(
-                        coinCurrentPrice
-                      )}
-                    </>
+                    <div style={{ textAlign: 'right' }}>
+                      <span className="mr-[1px]">{symbol}</span>               
+                      <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                        {separator(coinCurrentPrice)}
+                      </span>
+                    </div>
                   }
                   {!coinCurrentPrice && "-"}
                 </Typography>
               </span>
-              <span style={{ display: "flex" }}>
+              <span className="flex flex-wrap">
                 <Typography
                   variant="h5"
                   className="font-bold mb-5"
@@ -140,10 +156,10 @@ export default function CoinPage() {
                   style={{ fontFamily: "Montserrat" }}
                 >
                   {coinMarketCap &&
-                    <>
-                      ({symbol})
+                    <div style={{ textAlign: 'right' }}>
+                      <span className="mr-[1px]">{symbol}</span>
                       {marketCap()}
-                    </>
+                    </div>
                   }
                   {!coinMarketCap && coinMarketCap !== 0 && "-"}
                 </Typography>

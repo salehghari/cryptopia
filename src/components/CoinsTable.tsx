@@ -194,10 +194,12 @@ export default function CoinsTable() {
                         align="right"
                       >
                         {row.current_price && 
-                          <>
-                            (<span className="text-gray-400 mr-[1px]">{symbol}</span>)
-                            {separator(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
-                          </>
+                          <div style={{ textAlign: 'right' }}>
+                            <span className="text-gray-400 mr-[1px]">{symbol}</span>
+                            <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                              {separator(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
+                            </span>
+                          </div>
                         }
                         {!row.current_price && "-"}
                       </TableCell>
@@ -221,10 +223,13 @@ export default function CoinsTable() {
                         align="right"
                       >
                         {row.market_cap &&
-                          <>
-                            (<span className="text-gray-400 mr-[1px]">{symbol}</span>)
-                            {separator(row.market_cap?.toString().slice(0, -6))}M
-                          </>
+                          <div style={{ textAlign: 'right' }}>
+                            <span className="text-gray-400 mr-[1px]">{symbol}</span>
+                            <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                              {separator(row.market_cap?.toString().slice(0, -6))}
+                            </span>
+                            M
+                          </div>
                         }
                         {!row.market_cap && row.market_cap !== 0 && "-"}
                       </TableCell>

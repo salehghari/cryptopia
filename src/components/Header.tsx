@@ -5,29 +5,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCurrency, setSymbol } from "@/features/crypto/cryptoSlice";
 import { RootState } from "@/app/store";
 import { allCurrencies } from "@/config/allCurrencies";
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
-export function formatTime(date: Date) {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  const amOrPm = hours >= 12 ? 'PM' : 'AM';
-
-  const formattedHours = hours % 12 || 12;
-
-  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-
-  const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
-  return formattedTime;
-}
 
 export default function Header() {
   const [formattedTime, setFormattedTime] = useState("");
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+
 
   const router = useRouter();
 
   const dispatch = useDispatch();
 
   const globalData = useSelector((state: RootState) => state.crypto.globalData);
+  const currency = useSelector((state: RootState) => state.crypto.currency);
 
   const darkTheme = createTheme({
     palette: {
@@ -38,18 +30,52 @@ export default function Header() {
     },
   });
 
+  function formatTime(date: Date) {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+  
+    const amOrPm = hours >= 12 ? 'PM' : 'AM';
+  
+    const formattedHours = hours % 12 || 12;
+  
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  
+    const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
+    return formattedTime;
+  }
+
   useEffect(() => {
-    setFormattedTime(formatTime(new Date(globalData.data?.updated_at * 1000)));
+    setFormattedTime(
+      formatTime(new Date(globalData.data?.updated_at * 1000))
+    );
   }, [globalData.data?.updated_at]);
 
-  const currency = useSelector((state: RootState) => state.crypto.currency);
-
-  
+  const toggleMenu = () => {
+    setMenuIsOpen(prev => !prev)
+  }
   
   return (
     <ThemeProvider theme={darkTheme}>
+      <div className={`min-[400px]:hidden flex justify-end items-end fixed w-full h-28 bg-[#04142bfd] transition-all ease-in-out duration-300 ${!menuIsOpen ? "-top-full" : "top-0"}`}>
+        <select
+          className="w-2/4 p-2 mb-2 mr-3"
+          value={currency}
+          onChange={(e) => {
+            const selectedIndex = e.target.selectedIndex;
+            const selectedOption = e.target.options[selectedIndex];
+            dispatch(setCurrency(e.target.value))
+            dispatch(
+              setSymbol(selectedOption.getAttribute('data-symbol'))
+            );
+          }}
+        >
+          {allCurrencies.map((currency, i) => (
+            <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
+          ))}
+        </select>
+      </div>
       <AppBar color="transparent" className="bg-[#000814d7] backdrop-blur-lg" position="fixed">
-        {
+        {!formattedTime.includes("NaN") &&
           <div className="absolute m-1 text-[8px] text-gray-400">Last Update: {formattedTime}</div>
         }
         <Container>
@@ -73,22 +99,27 @@ export default function Header() {
                 pia
               </Typography>
             </div>
-            <select
-              className="w-1/5 p-3 my-2"
-              value={currency}
-              onChange={(e) => {
-                const selectedIndex = e.target.selectedIndex;
-                const selectedOption = e.target.options[selectedIndex];
-                dispatch(setCurrency(e.target.value))
-                dispatch(
-                  setSymbol(selectedOption.getAttribute('data-symbol'))
-                );
-              }}
-            >
-              {allCurrencies.map((currency, i) => (
-                <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
-              ))}
-            </select>
+            <div className="w-2/5 max-[399px]:hidden">
+              <select
+                className="w-full p-3 my-2"
+                value={currency}
+                onChange={(e) => {
+                  const selectedIndex = e.target.selectedIndex;
+                  const selectedOption = e.target.options[selectedIndex];
+                  dispatch(setCurrency(e.target.value))
+                  dispatch(
+                    setSymbol(selectedOption.getAttribute('data-symbol'))
+                  );
+                }}
+              >
+                {allCurrencies.map((currency, i) => (
+                  <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1 flex justify-end min-[400px]:hidden">
+              {menuIsOpen ? <CloseIcon onClick={toggleMenu} /> : <MenuIcon onClick={toggleMenu} />}
+            </div>
           </Toolbar>
         </Container>
       </AppBar>
