@@ -1,6 +1,6 @@
 import { RootState } from '@/app/store';
-import { CoinList, GlobalData, options } from '@/config/api';
-import { setAllCoins, setAllCoinsLoading, setPage, setSearch, setGlobalData } from '@/features/crypto/cryptoSlice';
+import { CoinList, options } from '@/config/api';
+import { setAllCoins, setAllCoinsLoading, setPage, setSearch } from '@/features/crypto/cryptoSlice';
 import { Button, Container, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -9,6 +9,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { separator } from './Banner/Carousel';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+
+export const orderNumber = (number: number) => {
+  let numStr = number?.toString();
+
+  if(number >= 10000000000000) {
+    // 10^12 => 1,000B
+    // 10^13 => 10T
+    return `${separator(Number(numStr.slice(0, -12)))}T`
+  }
+  else if(number >= 1000000000) {
+    return `${separator(Number(numStr.slice(0, -9)))}B`
+  }
+  else if(number >= 1000000) {
+    return `${separator(Number(numStr.slice(0, -6)))}M`
+  }
+  else if(number < 1000000 && number >= 0.01) {
+    return separator(number)
+  }
+  else if(number < 0.01) {
+    return separator(number, false)
+  }
+}
 
 export default function CoinsTable() {
   const [perPage, setPerPage] = useState(10);
@@ -30,12 +52,6 @@ export default function CoinsTable() {
   const globalData = useSelector((state: RootState) => state.crypto.globalData);
 
 
-  const fetchGlobalData = async () => {
-    const { data } = await axios.get(GlobalData(), options)
-    dispatch(setGlobalData(data));
-    console.log(data);
-  }
-
   const fetchAllCoins = async () => {
     dispatch(setAllCoinsLoading(true));
 
@@ -54,9 +70,6 @@ export default function CoinsTable() {
     setPerPage(10);
   }, [page])
 
-  useEffect(() => {
-    fetchGlobalData()
-  }, [])
 
   
   const handleScroll = () => {
@@ -195,9 +208,9 @@ export default function CoinsTable() {
                       >
                         {row.current_price && 
                           <div style={{ textAlign: 'right' }}>
-                            <span className="text-gray-400 mr-[1px]">{symbol}</span>
+                            <span className="text-gray-400 mr-[2px]">{symbol}</span>
                             <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                              {separator(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
+                              {orderNumber(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
                             </span>
                           </div>
                         }
@@ -209,8 +222,8 @@ export default function CoinsTable() {
                       >
                         {row.price_change_percentage_24h &&
                           <>
-                            {profit && <ArrowDropUpRoundedIcon className="mr-[-4px]" />}
-                            {!profit && <ArrowDropDownRoundedIcon className="mr-[-4px]" />}
+                            {profit && <ArrowDropUpRoundedIcon className="-mr-1" />}
+                            {!profit && <ArrowDropDownRoundedIcon className="-mr-1" />}
                             {row.price_change_percentage_24h.toFixed(2)
                             .toString()
                             .replace("-", "")}%
@@ -224,11 +237,10 @@ export default function CoinsTable() {
                       >
                         {row.market_cap &&
                           <div style={{ textAlign: 'right' }}>
-                            <span className="text-gray-400 mr-[1px]">{symbol}</span>
+                            <span className="text-gray-400 mr-[2px]">{symbol}</span>
                             <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                              {separator(row.market_cap?.toString().slice(0, -6))}
+                              {orderNumber(row.market_cap)}
                             </span>
-                            M
                           </div>
                         }
                         {!row.market_cap && row.market_cap !== 0 && "-"}

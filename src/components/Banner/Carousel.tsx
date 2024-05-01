@@ -11,7 +11,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { CircularProgress } from "@mui/material";
 
 
-export function separator(number: number) {
+export function separator(number: number, dontShowDitail: boolean = true) {
   let numStr = number?.toString();
 
   let parts = numStr?.split('.');
@@ -19,7 +19,13 @@ export function separator(number: number) {
   let decimalPart = parts?.[1];
 
   let formattedIntegerPart = integerPart?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  
 
+  if(dontShowDitail) {
+    if (number < 0.01) {
+      return "~0";
+    }
+  }
   if (decimalPart) {
       return formattedIntegerPart + '.' + decimalPart;
   } else {
@@ -82,9 +88,12 @@ export default function Carousel() {
               .replace("-", "")}%
             </span>
           </span>
-          <span className="text-xl font-medium">
-            ({symbol}) {separator(trendingCoin?.current_price.toFixed(2).replace(/\.0+$/,''))}
-          </span>
+          <div className="text-xl font-medium" style={{ textAlign: 'right' }}>
+            <span className="mr-[2px]">{symbol}</span>
+            <span style={{ direction: 'ltr', display: 'inline-block' }}>
+              {separator(trendingCoin?.current_price.toFixed(2).replace(/\.0+$/,''))}
+            </span>
+          </div>
         </>
       </Link>
     )

@@ -1,14 +1,15 @@
 import { useParams } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCoin, setGlobalData, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
+import { setCoin, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from '@/app/store';
 import axios from 'axios';
-import { GlobalData, SingleCoin, options } from '@/config/api';
+import { SingleCoin, options } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
 import { CircularProgress, Typography } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
 import { separator } from '@/components/Banner/Carousel';
+import { orderNumber } from '@/components/CoinsTable';
 
 
 
@@ -38,36 +39,13 @@ export default function CoinPage() {
       dispatch(setSingleCoinLoading(false));
     }
   }
-  const fetchGlobalData = async () => {
-    const { data } = await axios.get(GlobalData(), options)
-    dispatch(setGlobalData(data));
-    console.log(data);
-  }
   
 
   useEffect(() => {
     fetchCoin();
   }, [id])
   
-  useEffect(() => {
-    fetchGlobalData()
-  }, [])
-  
-  const marketCap = () => {
-    if(coinMarketCap >= 1000000) {
-      return (
-        <>
-          <span style={{ direction: 'ltr', display: 'inline-block' }}>
-            {separator(coinMarketCap.toString().slice(0, -6))}
-          </span>
-          M
-        </>
-      )
-    }
-    else if(coinMarketCap < 1000000) {
-      return separator(coinMarketCap)
-    }
-  }
+
   
   return (
     <>
@@ -101,10 +79,10 @@ export default function CoinPage() {
               {!coin.description?.en && "No Description"}
             </Typography>
             <div className="w-full self-start p-6 pt-3 max-lg:flex max-lg:justify-around max-md:flex-col max-md:items-center max-sm:items-start">
-              <span className="flex flex-wrap">
+              <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold mb-5"
+                  className="font-bold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Rank:
@@ -118,10 +96,10 @@ export default function CoinPage() {
                   {separator(coin?.market_cap_rank)}
                 </Typography>
               </span>
-              <span className="flex flex-wrap">
+              <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold mb-5"
+                  className="font-bold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Current Price:
@@ -133,19 +111,19 @@ export default function CoinPage() {
                 >
                   {coinCurrentPrice &&
                     <div style={{ textAlign: 'right' }}>
-                      <span className="mr-[1px]">{symbol}</span>               
+                      <span className="mr-[2px]">{symbol}</span>               
                       <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                        {separator(coinCurrentPrice)}
+                        {separator(coinCurrentPrice, false)}
                       </span>
                     </div>
                   }
                   {!coinCurrentPrice && "-"}
                 </Typography>
               </span>
-              <span className="flex flex-wrap">
+              <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold mb-5"
+                  className="font-bold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Market Cap:
@@ -157,8 +135,10 @@ export default function CoinPage() {
                 >
                   {coinMarketCap &&
                     <div style={{ textAlign: 'right' }}>
-                      <span className="mr-[1px]">{symbol}</span>
-                      {marketCap()}
+                      <span className="mr-[2px]">{symbol}</span>
+                      <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                        {orderNumber(coinMarketCap)}
+                      </span>
                     </div>
                   }
                   {!coinMarketCap && coinMarketCap !== 0 && "-"}

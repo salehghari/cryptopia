@@ -2,12 +2,13 @@ import { AppBar, Container, ThemeProvider, Toolbar, Typography, createTheme } fr
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrency, setSymbol } from "@/features/crypto/cryptoSlice";
+import { setCurrency, setSymbol, setGlobalData, setGlobalDataLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from "@/app/store";
 import { allCurrencies } from "@/config/allCurrencies";
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-
+import axios from "axios";
+import { GlobalData, options } from '@/config/api';
 
 export default function Header() {
   const [formattedTime, setFormattedTime] = useState("");
@@ -44,9 +45,23 @@ export default function Header() {
     return formattedTime;
   }
 
+  const fetchGlobalData = async () => {
+    dispatch(setGlobalDataLoading(true));
+
+    const { data } = await axios.get(GlobalData(), options)
+    dispatch(setGlobalData(data));
+
+    dispatch(setGlobalDataLoading(false));
+  }
+  useEffect(() => {
+    fetchGlobalData()
+  }, [])
+
   useEffect(() => {
     setFormattedTime(
-      formatTime(new Date(globalData.data?.updated_at * 1000))
+      formatTime(
+        new Date(globalData.data?.updated_at * 1000)
+      )
     );
   }, [globalData.data?.updated_at]);
 
@@ -75,7 +90,7 @@ export default function Header() {
         </select>
       </div>
       <AppBar color="transparent" className="bg-[#000814d7] backdrop-blur-lg" position="fixed">
-        {!formattedTime.includes("NaN") &&
+        {!formattedTime.includes("NaN") && formattedTime &&
           <div className="absolute m-1 text-[8px] text-gray-400">Last Update: {formattedTime}</div>
         }
         <Container>
@@ -101,7 +116,7 @@ export default function Header() {
             </div>
             <div className="w-2/5 max-[399px]:hidden">
               <select
-                className="w-full p-3 my-2"
+                className="w-full bg-gray-800 text-[#dfe5ec] p-3 my-2"
                 value={currency}
                 onChange={(e) => {
                   const selectedIndex = e.target.selectedIndex;
@@ -113,7 +128,7 @@ export default function Header() {
                 }}
               >
                 {allCurrencies.map((currency, i) => (
-                  <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
+                  <option className="bg-[#0d1217]" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
                 ))}
               </select>
             </div>

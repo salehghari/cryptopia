@@ -10,13 +10,12 @@ export default function SelectButton({ children, selected, onClick }: Props) {
   return (
     <span 
       onClick={onClick}
-      className="w-[24%] max-sm:w-full p-2 rounded cursor-pointer text-center"
+      className="px-3 py-[6px] rounded-lg cursor-pointer text-center text-[#9eb0c7] hover:text-[#dfe5ec]"
       style={{
         fontFamily: "Montserrat",
-        backgroundColor: selected ? "#256ab4" : "transparent",
-        color: selected ? "#000" : "#fff",
+        backgroundColor: selected ? "#0d1217" : "transparent",
+        color: selected ? "#dfe5ec" : "",
         fontWeight: selected ? 700 : 500,
-        border: selected ? "2px solid transparent" : "2px solid #003566",
       }}
     >{ children }</span>
   )

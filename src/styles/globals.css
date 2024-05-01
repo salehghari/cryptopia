@@ -43,7 +43,7 @@ select {
   outline: 0;
   min-width: 110px;
   background: var(--arrow-icon) no-repeat right 0.8em center / 1.4em,
-    linear-gradient(to left, rgba(255, 255, 255, 0.3) 3em, rgba(255, 255, 255, 0.2) 3em);
+    linear-gradient(to left, #2d3b50 3em, #1f2937 3em);
   color: #fff;
   border-radius: 0.25em;
   box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
@@ -55,11 +55,10 @@ select::-ms-expand {
 select:focus {
   outline: none;
   background: var(--arrow-icon) no-repeat right 0.8em center / 1.4em,
-    linear-gradient(to left, rgba(255, 255, 255, 0.25) 3em, rgba(255, 255, 255, 0.15) 3em);
+    linear-gradient(to left, #253142 3em, #19212c 3em);
 }
 select option {
-  color: #fff;
-  background-color: var(--bg-color);
+  color: #dfe5ec;
 }
 
 a {
