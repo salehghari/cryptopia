@@ -11,7 +11,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { CircularProgress } from "@mui/material";
 
 
-export function separator(number: number, dontShowDitail: boolean = true) {
+export function separator(number: number) {
   let numStr = number?.toString();
 
   let parts = numStr?.split('.');
@@ -21,11 +21,6 @@ export function separator(number: number, dontShowDitail: boolean = true) {
   let formattedIntegerPart = integerPart?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   
 
-  if(dontShowDitail) {
-    if (number < 0.01) {
-      return "~0";
-    }
-  }
   if (decimalPart) {
       return formattedIntegerPart + '.' + decimalPart;
   } else {

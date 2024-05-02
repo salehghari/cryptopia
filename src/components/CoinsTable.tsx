@@ -9,8 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { separator } from './Banner/Carousel';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 
-export const orderNumber = (number: number) => {
+export const orderNumber = (number: number, forChart: boolean = false) => {
   let numStr = number?.toString();
 
   if(number >= 10000000000000) {
@@ -25,10 +26,13 @@ export const orderNumber = (number: number) => {
     return `${separator(Number(numStr.slice(0, -6)))}M`
   }
   else if(number < 1000000 && number >= 0.01) {
-    return separator(number)
+    if(forChart) {
+      return separator(Number(number.toExponential(2)))
+    }
+    return separator(Number(number?.toFixed(2).replace(/\.0+$/,'')))
   }
   else if(number < 0.01) {
-    return separator(number, false)
+    return number.toExponential(2)
   }
 }
 
@@ -77,7 +81,7 @@ export default function CoinsTable() {
     const innerHeight = window.innerHeight;
     const scrollTop = document.documentElement.scrollTop;
     
-    if (offsetHeight - (innerHeight + scrollTop) <= 10 && router.pathname === "/" && !loading) {
+    if (offsetHeight - (innerHeight + scrollTop) <= 10 && router.pathname === "/" && !loading && !search) {
       setPerPage(perPage + 10);
       if (perPage === 100 && page < Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1) {
         dispatch(setPage(Number(page) + 1));
@@ -121,7 +125,7 @@ export default function CoinsTable() {
     <ThemeProvider theme={darkTheme}>
       <Container className="text-center">
         <Typography variant="h4" className="m-5" style={{ fontFamily: "Montserrat" }}>
-          Cryptocurrency Prices by Market Cap
+          Prices by Market Cap
         </Typography>
         <div className="flex justify-between gap-3 mb-5">
           <TextField
@@ -144,7 +148,7 @@ export default function CoinsTable() {
             onKeyDown={handleKeyDown}
             onChange={(e: any) => {
               if(e.target.value <= 0 || !globalData.data.active_cryptocurrencies) {
-                e.target.value = ""
+                e.target.value = "";
               }
               if(e.target.value > Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1) {
                 e.target.value = Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1
@@ -153,9 +157,16 @@ export default function CoinsTable() {
             }}
             InputProps={{endAdornment: 
               <Button
-                className="min-w-[auto] w-16"
+                className="min-w-[auto] w-16 max-sm:text-xs"
                 variant="text"
-                onClick={() => dispatch(setPage(pageInput))}
+                onClick={() => {
+                  if(pageInput) {
+                    dispatch(setPage(pageInput))
+                  }
+                  else {
+                    dispatch(setPage(1))
+                  }
+                }}
               >
                 Go
               </Button>
@@ -164,13 +175,13 @@ export default function CoinsTable() {
         </div>
         <TableContainer className="rounded-sm pb-5">
           {loading && <LinearProgress style={{ backgroundColor: "#003566" }}></LinearProgress>}
-          {!loading &&
+          {!loading && handleSearch().length !== 0 &&
             <Table>
               <TableHead className="secondary-bg">
                 <TableRow>
                   {tableRowItems.map(tableRowItem => (
                     <TableCell
-                      className="text-white text-lg font-bold"
+                      className="text-white text-lg max-sm:text-base font-bold"
                       style={{ fontFamily: "Montserrat" }}
                       key={tableRowItem}
                       align={tableRowItem === "Coin" ? undefined : "right"}
@@ -195,22 +206,23 @@ export default function CoinsTable() {
                       <TableCell
                         component="th"
                         scope="row"
-                        className="flex gap-4 text-white text-lg font-bold"
+                        className="flex gap-4 max-sm:gap-2 text-white text-lg max-sm:text-xs font-bold"
                       >
-                        <img src={row?.image} alt={row.name} className="mb-4 h-12" />
-                        <div className="flex flex-col">
-                          <span className="uppercase text-xl">{row.symbol}</span>
+                        <img src={row?.image} alt={row.name} className="h-12" />
+                        <div className="flex flex-col mr-6">
+                          <span className="uppercase text-lg">{row.symbol}</span>
                           <span className="text-gray-500">{row.name}</span>
                         </div>
                       </TableCell>
                       <TableCell
                         align="right"
+                        className="max-sm:text-xs"
                       >
                         {row.current_price && 
-                          <div style={{ textAlign: 'right' }}>
+                          <div className="flex justify-end" style={{ textAlign: 'right' }}>
                             <span className="text-gray-400 mr-[2px]">{symbol}</span>
                             <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                              {orderNumber(row.current_price?.toFixed(2).replace(/\.0+$/,''))}
+                              {orderNumber(row.current_price)}
                             </span>
                           </div>
                         }
@@ -218,7 +230,7 @@ export default function CoinsTable() {
                       </TableCell>
                       <TableCell
                         align="right"
-                        className={`font-medium ${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
+                        className={`font-medium max-sm:text-xs ${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
                       >
                         {row.price_change_percentage_24h &&
                           <>
@@ -234,6 +246,7 @@ export default function CoinsTable() {
                       </TableCell>
                       <TableCell
                         align="right"
+                        className="max-sm:text-xs"
                       >
                         {row.market_cap &&
                           <div style={{ textAlign: 'right' }}>
@@ -250,6 +263,12 @@ export default function CoinsTable() {
                 })}
               </TableBody>
             </Table>
+          }
+          {!loading && handleSearch().length === 0 && 
+            <div className="flex items-center bg-gray-800 p-5 rounded">
+              <ErrorOutlineRoundedIcon />
+              <p className="mx-auto">Your search did not match any coins on current page :(</p>
+            </div>
           }
         </TableContainer>
       </Container>

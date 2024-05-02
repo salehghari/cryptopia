@@ -113,7 +113,7 @@ export default function CoinPage() {
                     <div style={{ textAlign: 'right' }}>
                       <span className="mr-[2px]">{symbol}</span>               
                       <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                        {separator(coinCurrentPrice, false)}
+                        {separator(coinCurrentPrice)}
                       </span>
                     </div>
                   }

@@ -4,6 +4,10 @@ export const chartDays = [
     value: 1,
   },
   {
+    label: "7d",
+    value: 7,
+  },
+  {
     label: "1m",
     value: 30,
   },

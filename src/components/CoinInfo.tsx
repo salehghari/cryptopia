@@ -77,8 +77,8 @@ export default function CoinInfo({ coin } : Props) {
             />
           ) : (
             <>
-              <div className="flex items-center justify-center gap-3 max-sm:flex-col mt-5 mb-3 w-full">
-                <div className="flex bg-gray-800 p-1 rounded-xl">
+              <div className="flex  justify-center gap-3 max-sm:flex-col max-[400px]:text-sm mt-5 mb-3 w-full">
+                <div className="flex flex-wrap bg-gray-800 p-1 rounded-xl">
                   {historicDataBasis.map((data) => (
                     <SelectButton
                       key={data.value}
@@ -115,7 +115,7 @@ export default function CoinInfo({ coin } : Props) {
                   datasets: [
                     {
                       data: historicData[historicDataText]?.map((coin: any[]) => coin[1]),
-                      label: `Price ( Past ${days} Days ) in ${currency}`,
+                      label: `Price ( Past ${days} ${days === 1 ? "Day" : "Days"} ) in ${currency}`,
                       borderColor: "#256ab4",
                       backgroundColor: function(context) {
                         const chart = context.chart;
@@ -138,7 +138,7 @@ export default function CoinInfo({ coin } : Props) {
                     y: {
                       ticks: {
                         callback: function(value: any) {
-                            return orderNumber(value);
+                          return orderNumber(value, true);
                         }
                       }
                     }
@@ -155,7 +155,6 @@ export default function CoinInfo({ coin } : Props) {
                   },
                 }}
               />
-
             </>
           )
         }

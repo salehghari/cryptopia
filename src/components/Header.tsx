@@ -71,9 +71,9 @@ export default function Header() {
   
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className={`min-[400px]:hidden flex justify-end items-end fixed w-full h-28 bg-[#04142bfd] transition-all ease-in-out duration-300 ${!menuIsOpen ? "-top-full" : "top-0"}`}>
+      <div className={`min-[400px]:hidden flex justify-end items-end fixed w-full h-28 bg-[#051022] transition-all ease-in-out duration-300 ${!menuIsOpen ? "-top-full" : "top-0"}`}>
         <select
-          className="w-2/4 p-2 mb-2 mr-3"
+          className="text-[#dfe5ec] w-2/4 p-2 mb-2 mr-3"
           value={currency}
           onChange={(e) => {
             const selectedIndex = e.target.selectedIndex;
@@ -85,7 +85,7 @@ export default function Header() {
           }}
         >
           {allCurrencies.map((currency, i) => (
-            <option className="primary-bg" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
+            <option className="bg-[#0d1217]" key={i} data-symbol={currency.symbol} value={currency.code}>{currency.code} ({currency.symbol})</option>
           ))}
         </select>
       </div>
@@ -116,7 +116,7 @@ export default function Header() {
             </div>
             <div className="w-2/5 max-[399px]:hidden">
               <select
-                className="w-full bg-gray-800 text-[#dfe5ec] p-3 my-2"
+                className="w-full text-[#dfe5ec] p-3 my-2"
                 value={currency}
                 onChange={(e) => {
                   const selectedIndex = e.target.selectedIndex;
