@@ -2,18 +2,19 @@ import { AppBar, Container, ThemeProvider, Toolbar, Typography, createTheme } fr
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrency, setSymbol, setGlobalData, setGlobalDataLoading } from "@/features/crypto/cryptoSlice";
+import { setCurrency, setSymbol, setGlobalData } from "@/features/crypto/cryptoSlice";
 import { RootState } from "@/app/store";
 import { allCurrencies } from "@/config/allCurrencies";
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
 import { GlobalData, options } from '@/config/api';
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [formattedTime, setFormattedTime] = useState("");
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-
+  const pathname = usePathname();
 
   const router = useRouter();
 
@@ -46,16 +47,13 @@ export default function Header() {
   }
 
   const fetchGlobalData = async () => {
-    dispatch(setGlobalDataLoading(true));
-
     const { data } = await axios.get(GlobalData(), options)
     dispatch(setGlobalData(data));
-
-    dispatch(setGlobalDataLoading(false));
+    console.log(data.data);
   }
   useEffect(() => {
     fetchGlobalData()
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
     setFormattedTime(

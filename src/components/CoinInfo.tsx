@@ -31,7 +31,6 @@ export default function CoinInfo({ coin } : Props) {
     if(coin.id) {
       const { data } = await axios.get(HistoricalChart(coin.id, days, currency));
       setHistoricData(data);
-      console.log(data);
     }
   }
 

@@ -8,7 +8,7 @@ interface cryptoState {
   coin: {
     [key: string]: any
   },
-  loading: { allCoins: boolean, trendingCoins: boolean, singleCoin: boolean, globalData: boolean },
+  loading: { allCoins: boolean, trendingCoins: boolean, singleCoin: boolean },
   page: number,
   search: string,
   globalData: {
@@ -22,7 +22,7 @@ const initialState: cryptoState = {
   trendingCoins: [],
   allCoins: [],
   coin: {},
-  loading: { allCoins: false, trendingCoins: false, singleCoin: false, globalData: false },
+  loading: { allCoins: false, trendingCoins: false, singleCoin: false },
   page: 1,
   search: "",
   globalData: {},
@@ -56,9 +56,6 @@ const cryptoSlice = createSlice({
     setSingleCoinLoading: (state, action: PayloadAction<boolean>) => {
       state.loading.singleCoin = action.payload;
     },
-    setGlobalDataLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading.globalData = action.payload;
-    },
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
     },
@@ -80,7 +77,6 @@ export const {
   setAllCoinsLoading,
   setTrendingCoinsLoading,
   setSingleCoinLoading,
-  setGlobalDataLoading,
   setPage,
   setSearch,
   setGlobalData

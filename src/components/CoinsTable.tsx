@@ -264,7 +264,7 @@ export default function CoinsTable() {
               </TableBody>
             </Table>
           }
-          {!loading && handleSearch().length === 0 && 
+          {!loading && search && handleSearch().length === 0 && 
             <div className="flex items-center bg-gray-800 p-5 rounded">
               <ErrorOutlineRoundedIcon />
               <p className="mx-auto">Your search did not match any coins on current page :(</p>
