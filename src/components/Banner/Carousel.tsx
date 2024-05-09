@@ -112,6 +112,14 @@ export default function Carousel() {
           responsive={responsive}
           autoPlay
           items={items}
+          renderDotsItem={
+            (e) => (
+              <>
+                {!e.isActive && <li className="w-2 h-2 bg-gray-400 rounded-[50%] ml-3 cursor-pointer"></li>}
+                {e.isActive && <li className="w-2 h-2 bg-[#2576c2] rounded-[50%] ml-3"></li>}
+              </>
+            )
+          }
         />
       }
     </div>

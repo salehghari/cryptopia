@@ -86,9 +86,7 @@ export default function CoinsTable() {
       if (perPage === 100 && page < Number((globalData.data.active_cryptocurrencies / 100).toFixed()) + 1) {
         dispatch(setPage(Number(page) + 1));
         setPerPage(10);
-        window.scrollTo({
-          top: 0,
-        });
+        window.scrollTo({top: 0, behavior: "instant"});
       }
     }
   };
@@ -177,7 +175,7 @@ export default function CoinsTable() {
           {loading && <LinearProgress style={{ backgroundColor: "#003566" }}></LinearProgress>}
           {!loading && handleSearch().length !== 0 &&
             <Table>
-              <TableHead className="secondary-bg">
+              <TableHead className="bg-[#054785]">
                 <TableRow>
                   {tableRowItems.map(tableRowItem => (
                     <TableCell
@@ -233,13 +231,13 @@ export default function CoinsTable() {
                         className={`font-medium max-sm:text-xs ${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
                       >
                         {row.price_change_percentage_24h &&
-                          <>
+                          <div className="flex items-center">
                             {profit && <ArrowDropUpRoundedIcon className="-mr-1" />}
                             {!profit && <ArrowDropDownRoundedIcon className="-mr-1" />}
                             {row.price_change_percentage_24h.toFixed(2)
                             .toString()
                             .replace("-", "")}%
-                          </>
+                          </div>
                         }
                         {!row.price_change_percentage_24h && "-"}
 
