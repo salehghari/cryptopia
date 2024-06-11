@@ -76,7 +76,7 @@ export default function CoinInfo({ coin } : Props) {
             />
           ) : (
             <>
-              <div className="flex  justify-center gap-3 max-sm:flex-col max-[400px]:text-sm mt-5 mb-3 w-full">
+              <div className="flex justify-center gap-3 max-sm:flex-col max-[400px]:text-sm mt-5 mb-3 w-full">
                 <div className="flex flex-wrap bg-gray-800 p-1 rounded-xl">
                   {historicDataBasis.map((data) => (
                     <SelectButton
@@ -88,7 +88,7 @@ export default function CoinInfo({ coin } : Props) {
                     </SelectButton>
                   ))}
                 </div>
-                <div className="flex bg-gray-800 p-1 rounded-xl">
+                <div className="flex flex-wrap bg-gray-800 p-1 rounded-xl">
                   {chartDays.map((day) => (
                     <SelectButton
                       key={day.value}

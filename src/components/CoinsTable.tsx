@@ -207,7 +207,7 @@ export default function CoinsTable() {
                         className="flex gap-4 max-sm:gap-2 text-white text-lg max-sm:text-xs font-bold"
                       >
                         <img src={row?.image} alt={row.name} className="h-12" />
-                        <div className="flex flex-col mr-6">
+                        <div className="flex flex-col max-sm:w-32">
                           <span className="uppercase text-lg">{row.symbol}</span>
                           <span className="text-gray-500">{row.name}</span>
                         </div>
@@ -231,7 +231,7 @@ export default function CoinsTable() {
                         className={`font-medium max-sm:text-xs ${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
                       >
                         {row.price_change_percentage_24h &&
-                          <div className="flex items-center">
+                          <div className="flex justify-end items-center">
                             {profit && <ArrowDropUpRoundedIcon className="-mr-1" />}
                             {!profit && <ArrowDropDownRoundedIcon className="-mr-1" />}
                             {row.price_change_percentage_24h.toFixed(2)

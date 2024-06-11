@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCoin, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from '@/app/store';
 import axios from 'axios';
+import Head from 'next/head';
 import { SingleCoin, options } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
@@ -10,6 +11,10 @@ import { CircularProgress, Typography } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
 import { separator } from '@/components/Banner/Carousel';
 import { orderNumber } from '@/components/CoinsTable';
+import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import { parseISO, format, differenceInMonths  } from 'date-fns';
+
 
 
 
@@ -27,12 +32,34 @@ export default function CoinPage() {
   const loading = useSelector((state: RootState) => state.crypto.loading.singleCoin);
 
   const coinMarketCap = coin?.market_data?.market_cap[currency.toLowerCase()];
+  const coinTotalVolume = coin?.market_data?.total_volume[currency.toLowerCase()];
   const coinCurrentPrice = coin?.market_data?.current_price[currency.toLowerCase()];
+  const coinATH = coin?.market_data?.ath[currency.toLowerCase()];
+  const coinATHPercentage = coin?.market_data?.ath_change_percentage[currency.toLowerCase()];
+  const coinATHPercentageProfit = coinATHPercentage > 0;
+  const coinATHDate = coin?.market_data?.ath_date[currency.toLowerCase()];
+  const coinATL = coin?.market_data?.atl[currency.toLowerCase()];
+  const coinATLPercentage = coin?.market_data?.atl_change_percentage[currency.toLowerCase()];
+  const coinATLPercentageProfit = coinATLPercentage > 0;
+  const coinATLDate = coin?.market_data?.atl_date[currency.toLowerCase()];
+
+  const formatDate = (dateString: string, getYearsDifference: boolean = false): string => {
+    const date = parseISO(dateString);
+    const formattedDate = format(date, 'MMM dd, yyyy');
+    const now = new Date();
+    const monthsDifference = Math.abs(differenceInMonths(date, now));
+    const yearsDifference = (monthsDifference / 12).toFixed();
+    if(getYearsDifference) {
+      return `${formattedDate} (almost ${yearsDifference} years)`
+    }
+    return `${formattedDate} (${monthsDifference} months)`;
+  };
+
 
   const fetchCoin = async () => {
     dispatch(setSingleCoinLoading(true));
     if(id) {
-      const { data } = await axios.get(SingleCoin(id))
+      const { data } = await axios.get(SingleCoin(id), options)
       dispatch(
         setCoin(data)
       )
@@ -49,6 +76,9 @@ export default function CoinPage() {
   
   return (
     <>
+      {id && <Head>
+        <title>{`Cryptopia - ${id}`}</title>
+      </Head>}
       {loading && 
         <div className="h-screen flex items-center justify-center">
           <CircularProgress
@@ -60,7 +90,7 @@ export default function CoinPage() {
       }
       {!loading && 
         <div className="lg:overflow-y-auto lg:h-screen flex max-lg:flex-col max-lg:items-center pt-16">
-          <div className="w-[30%] flex flex-col items-center mt-6 max-lg:w-full">
+          <div className="w-[40%] flex flex-col items-center mt-6 max-lg:w-full">
             <img
               src={ coin.image?.large }
               alt={ coin.name }
@@ -78,17 +108,18 @@ export default function CoinPage() {
               }
               {!coin.description?.en && "No Description"}
             </Typography>
-            <div className="w-full self-start p-6 pt-3 max-lg:flex max-lg:justify-around max-md:flex-col max-md:items-center max-sm:items-start">
+            <div className="w-full self-start p-6 pt-3 max-lg:flex max-lg:justify-around max-lg:flex-col max-md:items-center max-sm:items-start">
               <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold"
+                  
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Rank:
                 </Typography>
                 &nbsp; &nbsp;
                 <Typography
+                  className="font-semibold"
                   variant="h5"
                   style={{ fontFamily: "Montserrat" }}
                 >
@@ -99,7 +130,6 @@ export default function CoinPage() {
               <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Current Price:
@@ -107,6 +137,7 @@ export default function CoinPage() {
                 &nbsp; &nbsp;
                 <Typography
                   variant="h5"
+                  className="font-semibold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   {coinCurrentPrice &&
@@ -123,7 +154,6 @@ export default function CoinPage() {
               <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  className="font-bold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Market Cap:
@@ -131,6 +161,7 @@ export default function CoinPage() {
                 &nbsp; &nbsp;
                 <Typography
                   variant="h5"
+                  className="font-semibold"
                   style={{ fontFamily: "Montserrat" }}
                 >
                   {coinMarketCap &&
@@ -143,6 +174,140 @@ export default function CoinPage() {
                   }
                   {!coinMarketCap && coinMarketCap !== 0 && "-"}
                 </Typography>
+              </span>
+              <span className="flex flex-wrap mb-5">
+                <Typography
+                  variant="h5"
+                  style={{ fontFamily: "Montserrat" }}
+                >
+                  Total Volume:
+                </Typography>
+                &nbsp; &nbsp;
+                <Typography
+                  variant="h5"
+                  className="font-semibold"
+                  style={{ fontFamily: "Montserrat" }}
+                >
+                  {coinTotalVolume &&
+                    <div style={{ textAlign: 'right' }}>
+                      <span className="mr-[2px]">{symbol}</span>
+                      <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                        {orderNumber(coinTotalVolume)}
+                      </span>
+                    </div>
+                  }
+                  {!coinTotalVolume && coinTotalVolume !== 0 && "-"}
+                </Typography>
+              </span>
+              <span className="flex items-center flex-wrap lg:justify-between mb-5">
+                <Typography
+                  variant="h5"
+                  className="text-sm"
+                  style={{ fontFamily: "Montserrat" }}
+                >
+                  All-Time High:
+                </Typography>
+                &nbsp; &nbsp;
+                <div className="flex flex-col">
+                  <div className="flex justify-end">
+                    <Typography
+                      variant="h5"
+                      className="font-medium max-lg:text-xs text-sm"
+                      style={{ fontFamily: "Montserrat" }}
+                    >
+                      {coinATH &&
+                        <div style={{ textAlign: 'right' }}>
+                          <span className="mr-[2px]">{symbol}</span>               
+                          <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                            {separator(coinATH)}
+                          </span>
+                        </div>
+                      }
+                      {!coinATH && "-"}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      style={{ fontFamily: "Montserrat" }}
+                      className={`font-medium max-lg:text-xs text-sm ${ coinATHPercentageProfit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
+                    >
+                      {coinATHPercentage &&
+                        <div>
+                          {coinATHPercentageProfit && <ArrowDropUpRoundedIcon className="-mr-1" />}
+                          {!coinATHPercentageProfit && <ArrowDropDownRoundedIcon className="-mr-1" />}
+                          {coinATHPercentage.toFixed(2)
+                          .toString()
+                          .replace("-", "")}%
+                        </div>
+                      }
+                      {!coinATHPercentage && "-"}
+                    </Typography>
+                  </div>
+                  <div className="flex justify-end">
+                    <Typography
+                      variant="h5"
+                      style={{ fontFamily: "Montserrat" }}
+                      className="font-medium max-lg:text-xs text-sm text-gray-400"
+                    >
+                      {coinATHDate && formatDate(coinATHDate)}
+                      {!coinATHDate && "-"}
+                    </Typography>
+                  </div>
+                </div>
+              </span>
+              <span className="flex items-center flex-wrap lg:justify-between mb-5">
+                <Typography
+                  variant="h5"
+                  className="text-sm"
+                  style={{ fontFamily: "Montserrat" }}
+                >
+                  All-Time Low:
+                </Typography>
+                &nbsp; &nbsp;
+                <div className="flex flex-col">
+                  <div className="flex justify-end">
+                    <Typography
+                      variant="h5"
+                      className="font-medium max-lg:text-xs text-sm"
+                      style={{ fontFamily: "Montserrat" }}
+                    >
+                      {coinATL &&
+                        <div style={{ textAlign: 'right' }}>
+                          <span className="mr-[2px]">{symbol}</span>               
+                          <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                            {separator(coinATL)}
+                          </span>
+                        </div>
+                      }
+                      {!coinATL && "-"}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      style={{ fontFamily: "Montserrat" }}
+                      className={`font-medium max-lg:text-xs text-sm ${ coinATLPercentageProfit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
+                    >
+                      {coinATLPercentage &&
+                        <div>
+                          {coinATLPercentageProfit && <ArrowDropUpRoundedIcon className="-mr-1" />}
+                          {!coinATLPercentageProfit && <ArrowDropDownRoundedIcon className="-mr-1" />}
+                          {coinATLPercentage.toFixed(2)
+                          .toString()
+                          .replace("-", "")}%
+                        </div>
+                      }
+                      {!coinATLPercentage && "-"}
+                    </Typography>
+                  </div>
+                  <div className="flex justify-end">
+                    <Typography
+                      variant="h5"
+                      style={{ fontFamily: "Montserrat" }}
+                      className="font-medium max-lg:text-xs text-sm text-gray-400"
+                    >
+                      {coinATLDate && formatDate(coinATLDate, true)}
+                      {!coinATLDate && "-"}
+                    </Typography>
+                  </div>
+                </div>
               </span>
             </div>
           </div>

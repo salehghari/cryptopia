@@ -70,7 +70,7 @@ export default function Banner() {
           <>
             <div className="flex flex-col gap-1 justify-center items-center py-5 px-12 sm:my-8 sm:border-r-2 text-center border-[#ffffff4d] max-sm:mx-8 max-sm:border-b-2">
               <Typography variant="h4" className="text-[#4d97d3] text-4xl">
-                +<CountUp start={0} end={Math.floor(data?.active_cryptocurrencies / 10) * 10} duration={2} delay={0.5} />
+                <CountUp start={0} end={Math.floor(data?.active_cryptocurrencies / 10) * 10} duration={2} delay={0.5} />+
               </Typography>
               <Typography variant="subtitle1" className="text-gray-300 text-lg">
                 Coins
@@ -78,7 +78,7 @@ export default function Banner() {
             </div>
             <div className="flex flex-col gap-1 justify-center items-center py-5 px-12 sm:my-8 sm:border-r-2 text-center border-[#ffffff4d] max-sm:mx-8 max-sm:border-b-2">
               <Typography variant="h4" className="text-[#4d97d3] text-4xl">
-                +<CountUp start={0} end={Math.floor(data?.markets / 10) * 10} duration={2} delay={0.5}/>
+                <CountUp start={0} end={Math.floor(data?.markets / 10) * 10} duration={2} delay={0.5}/>+
               </Typography>
               <Typography variant="subtitle1" className="text-gray-300 text-lg">
                 Markets
@@ -86,7 +86,7 @@ export default function Banner() {
             </div>
             <div className="flex flex-col gap-1 justify-center items-center py-5 px-12 sm:my-8 max-sm:mx-8 text-center">
               <Typography variant="h4" className="text-[#4d97d3] text-4xl">
-                +<CountUp start={0} end={Math.floor(data?.ended_icos / 10) * 10} duration={2} delay={0.5}/>
+                <CountUp start={0} end={Math.floor(data?.ended_icos / 10) * 10} duration={2} delay={0.5}/>+
               </Typography>
               <Typography variant="subtitle1" className="text-gray-300 text-lg">
                 Initial coin offerings (ICOs)

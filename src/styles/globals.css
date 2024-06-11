@@ -14,9 +14,15 @@
   -webkit-tap-highlight-color: transparent;
   --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
 }
-
+text {
+  pointer-events: none;
+}
+svg {
+  transition: all .4s;
+}
 ::-webkit-scrollbar {
   width: 8px;
+  height: 4px;
   background-color: #000814;
 }
 ::-webkit-scrollbar-track {
