@@ -7,13 +7,14 @@ import Head from 'next/head';
 import { SingleCoin, options } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress, Typography, Button } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
 import { separator } from '@/components/Banner/Carousel';
 import { orderNumber } from '@/components/CoinsTable';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { parseISO, format, differenceInMonths  } from 'date-fns';
+import Link from 'next/link';
 
 
 
@@ -42,6 +43,11 @@ export default function CoinPage() {
   const coinATLPercentage = coin?.market_data?.atl_change_percentage[currency.toLowerCase()];
   const coinATLPercentageProfit = coinATLPercentage > 0;
   const coinATLDate = coin?.market_data?.atl_date[currency.toLowerCase()];
+  const high24H = coin?.market_data?.high_24h[currency.toLowerCase()];
+  const low24H = coin?.market_data?.low_24h[currency.toLowerCase()];
+  const areLowHighPricesTrue = Boolean(low24H) === true && Boolean(high24H) === true;
+  const tradeUrl = Object.assign({}, coin?.tickers)[0]?.trade_url;
+    
 
   const formatDate = (dateString: string, getYearsDifference: boolean = false): string => {
     const date = parseISO(dateString);
@@ -109,10 +115,48 @@ export default function CoinPage() {
               {!coin.description?.en && "No Description"}
             </Typography>
             <div className="w-full self-start p-6 pt-3 max-lg:flex max-lg:justify-around max-lg:flex-col max-md:items-center max-sm:items-start">
+              { areLowHighPricesTrue && 
+              <>
+                <div className="relative w-full rounded-lg h-2 bg-[#ffffff28] mt-1">
+                  <div
+                    style={{width: `${(100 * (coinCurrentPrice - low24H)) / (high24H - low24H)}%`}}
+                    className="absolute left-0 top-0 rounded-lg h-2 z-10 bg-[#256ab4]"
+                  >
+                    <p className="absolute -right-[14px] -top-[30px] text-[#f5f5f5] text-xs">Now</p>
+                    <ArrowDropDownRoundedIcon className="absolute -right-[18px] -top-7 text-4xl text-[#f5f5f5]" />
+                  </div>
+                </div>
+
+                <div className="flex justify-between text-xs mt-1 mb-3 w-full">
+                  <Typography
+                    variant="h5"
+                    className="text-xs font-medium"
+                    style={{ fontFamily: "Montserrat" }}
+                  >
+                    {symbol}
+                    {separator(low24H)}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    className="text-xs font-medium"
+                    style={{ fontFamily: "Montserrat" }}
+                  >
+                    24h Range
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    className="text-xs font-medium"
+                    style={{ fontFamily: "Montserrat" }}
+                  >
+                    {symbol}
+                    {separator(high24H)}
+                  </Typography>
+                </div>
+              </>
+              }
               <span className="flex flex-wrap mb-5">
                 <Typography
                   variant="h5"
-                  
                   style={{ fontFamily: "Montserrat" }}
                 >
                   Rank:
@@ -208,6 +252,7 @@ export default function CoinPage() {
                   All-Time High:
                 </Typography>
                 &nbsp; &nbsp;
+                {coinATH &&
                 <div className="flex flex-col">
                   <div className="flex justify-end">
                     <Typography
@@ -215,31 +260,25 @@ export default function CoinPage() {
                       className="font-medium max-lg:text-xs text-sm"
                       style={{ fontFamily: "Montserrat" }}
                     >
-                      {coinATH &&
-                        <div style={{ textAlign: 'right' }}>
-                          <span className="mr-[2px]">{symbol}</span>               
-                          <span style={{ direction: 'ltr', display: 'inline-block' }}>
-                            {separator(coinATH)}
-                          </span>
-                        </div>
-                      }
-                      {!coinATH && "-"}
+                      <div style={{ textAlign: 'right' }}>
+                        <span className="mr-[2px]">{symbol}</span>               
+                        <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                          {separator(coinATH)}
+                        </span>
+                      </div>
                     </Typography>
                     <Typography
                       variant="h5"
                       style={{ fontFamily: "Montserrat" }}
                       className={`font-medium max-lg:text-xs text-sm ${ coinATHPercentageProfit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}
                     >
-                      {coinATHPercentage &&
-                        <div>
-                          {coinATHPercentageProfit && <ArrowDropUpRoundedIcon className="-mr-1" />}
-                          {!coinATHPercentageProfit && <ArrowDropDownRoundedIcon className="-mr-1" />}
-                          {coinATHPercentage.toFixed(2)
-                          .toString()
-                          .replace("-", "")}%
-                        </div>
-                      }
-                      {!coinATHPercentage && "-"}
+                      <div>
+                        {coinATHPercentageProfit && <ArrowDropUpRoundedIcon className="-mr-1" />}
+                        {!coinATHPercentageProfit && <ArrowDropDownRoundedIcon className="-mr-1" />}
+                        {coinATHPercentage.toFixed(2)
+                        .toString()
+                        .replace("-", "")}%
+                      </div>
                     </Typography>
                   </div>
                   <div className="flex justify-end">
@@ -253,6 +292,8 @@ export default function CoinPage() {
                     </Typography>
                   </div>
                 </div>
+                }
+                {!coinATH && "-"}
               </span>
               <span className="flex items-center flex-wrap lg:justify-between mb-5">
                 <Typography
@@ -263,6 +304,7 @@ export default function CoinPage() {
                   All-Time Low:
                 </Typography>
                 &nbsp; &nbsp;
+                {coinATL &&
                 <div className="flex flex-col">
                   <div className="flex justify-end">
                     <Typography
@@ -308,7 +350,14 @@ export default function CoinPage() {
                     </Typography>
                   </div>
                 </div>
+                }
+                {!coinATL && "-"}
               </span>
+              {tradeUrl && 
+                <Link className="w-full" href={tradeUrl} target="_blank">
+                  <Button className="w-full bg-[#256ab4] text-[#000814] font-bold text-base py-3" variant="contained">Trade Now!</Button>
+                </Link>
+              }
             </div>
           </div>
           <CoinInfo coin={ coin } />
