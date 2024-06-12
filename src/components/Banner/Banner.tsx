@@ -97,7 +97,7 @@ export default function Banner() {
       </Container>
       <Container className="flex flex-col items-center justify-center mb-14">
         <Typography variant="h4" className="text-center mb-5" style={{ fontFamily: "Montserrat" }}>
-          Coins' Dominance By Market Cap
+          Coins&apos; Dominance By Market Cap
         </Typography>
         <div className="flex justify-center w-full max-w-[800px]">
           <PieChart

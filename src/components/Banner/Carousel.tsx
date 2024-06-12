@@ -66,7 +66,7 @@ export default function Carousel() {
   const items = trendingCoins.map((trendingCoin: any) => {
     let profit = trendingCoin.price_change_percentage_24h >= 0;
     return (
-      <Link className="flex flex-col items-center justify-between cursor-pointer uppercase text-white h-[135px]" href={`/coins/${trendingCoin.id}`}>
+      <Link key={trendingCoin.name} className="flex flex-col items-center justify-between cursor-pointer uppercase text-white h-[135px]" href={`/coins/${trendingCoin.id}`}>
         <img
           className="mb-2 h-20 w-20"
           src={trendingCoin?.image}

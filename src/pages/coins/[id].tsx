@@ -128,14 +128,12 @@ export default function CoinPage() {
                 </div>
 
                 <div className="flex justify-between text-xs mt-1 mb-3 w-full">
-                  <Typography
-                    variant="h5"
-                    className="text-xs font-medium"
-                    style={{ fontFamily: "Montserrat" }}
-                  >
-                    {symbol}
-                    {separator(low24H)}
-                  </Typography>
+                  <div style={{ textAlign: 'right' }}>
+                    <span>{symbol}</span>
+                    <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                      {separator(low24H)}
+                    </span>
+                  </div>
                   <Typography
                     variant="h5"
                     className="text-xs font-medium"
@@ -143,14 +141,12 @@ export default function CoinPage() {
                   >
                     24h Range
                   </Typography>
-                  <Typography
-                    variant="h5"
-                    className="text-xs font-medium"
-                    style={{ fontFamily: "Montserrat" }}
-                  >
-                    {symbol}
-                    {separator(high24H)}
-                  </Typography>
+                  <div style={{ textAlign: 'right' }}>
+                    <span>{symbol}</span>
+                    <span style={{ direction: 'ltr', display: 'inline-block' }}>
+                      {separator(high24H)}
+                    </span>
+                  </div>
                 </div>
               </>
               }
