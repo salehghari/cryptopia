@@ -39,13 +39,21 @@ export const orderNumber = (number: number, forChart: boolean = false) => {
 export default function CoinsTable() {
   const [perPage, setPerPage] = useState(10);
   const [pageInput, setPageInput] = useState(1);
+  const [sortConfig, setSortConfig] = useState({ key: 'market_cap', direction: 'asc' });
+
 
 
   const dispatch = useDispatch();
 
   const router = useRouter();
 
-  const tableRowItems: string[] = ["Coin", "Price", "24h Change", "Market Cap"];
+  const tableRowItems = [
+    {sortBy: "market_cap", text: "#"},
+    {sortBy: "name", text: "Coin"},
+    {sortBy: "current_price", text: "Price"},
+    {sortBy: "price_change_percentage_24h", text: "24h Change"},
+    {sortBy: "market_cap", text: "Market Cap"}
+  ];
 
   const currency = useSelector((state: RootState) => state.crypto.currency);
   const symbol = useSelector((state: RootState) => state.crypto.symbol);
@@ -108,11 +116,46 @@ export default function CoinsTable() {
   });
 
   const handleSearch = () => {
-    return allCoins.filter((coin: { name: string; symbol: string; }) => (
+    let filteredCoins = allCoins.filter((coin: { name: string; symbol: string; }) => (
       coin.name.toLowerCase().includes(search.toLowerCase()) ||
       coin.symbol.toLowerCase().includes(search.toLowerCase())
     ))
+
+    if (sortConfig !== null) {
+      filteredCoins = filteredCoins.sort((a, b) => {
+        if (sortConfig.key === 'name') {
+          if (a[sortConfig.key].toLowerCase() < b[sortConfig.key].toLowerCase()) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (a[sortConfig.key].toLowerCase() > b[sortConfig.key].toLowerCase()) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        } else {
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          return 0;
+        }
+      });
+    }
+
+    return filteredCoins;
   }
+  const handleSort = (key: string) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredCoins = handleSearch();
+
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       dispatch(setPage(pageInput));
@@ -179,12 +222,22 @@ export default function CoinsTable() {
                 <TableRow>
                   {tableRowItems.map(tableRowItem => (
                     <TableCell
-                      className="text-white text-lg max-sm:text-base font-bold"
+                      className="text-white text-lg max-sm:text-base font-bold cursor-pointer hover:bg-[#064f94] transition-colors"
+                      onClick={() => handleSort(tableRowItem.sortBy)}
+                      sx={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
                       style={{ fontFamily: "Montserrat" }}
-                      key={tableRowItem}
-                      align={tableRowItem === "Coin" ? undefined : "right"}
+                      key={tableRowItem.text}
+                      align={tableRowItem.text === "#" || tableRowItem.text === "Coin" ? undefined : "right"}
                     >
-                      {tableRowItem}
+                      
+                      {sortConfig.key === tableRowItem.sortBy && (
+                        <ArrowDropUpRoundedIcon style={{ transform: sortConfig.direction === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                      )}
+                      {tableRowItem.text}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -193,7 +246,11 @@ export default function CoinsTable() {
               <TableBody>
                 {handleSearch().slice(0, perPage).map((row) => {
                   const profit = row.price_change_percentage_24h > 0;
-
+                  const is1stRank = row.market_cap_rank === 1;
+                  const is2ndRank = row.market_cap_rank === 2;
+                  const is3rdRank = row.market_cap_rank === 3;
+                  const anyRank = row.market_cap_rank > 3;
+                  
                   return (
                     <TableRow
                       onClick={() => router.push(`/coins/${row.id}`)}
@@ -202,8 +259,15 @@ export default function CoinsTable() {
                       key={row.id}
                     >
                       <TableCell
-                        component="th"
-                        scope="row"
+                        className="text-lg font-bold"
+                      >
+                        {is1stRank && <div style={{color : "#ffd900"}}>{row.market_cap_rank}</div>}
+                        {is2ndRank && <div style={{color : "#c2d1dd"}}>{row.market_cap_rank}</div>}
+                        {is3rdRank && <div style={{color : "#e5ae7c"}}>{row.market_cap_rank}</div>}
+                        {anyRank && <div style={{color : "#fff"}}>{row.market_cap_rank}</div>}
+                        {!row.market_cap_rank && "-"}
+                      </TableCell>
+                      <TableCell 
                         className="flex gap-4 max-sm:gap-2 text-white text-lg max-sm:text-xs font-bold"
                       >
                         <img src={row?.image} alt={row.name} className="h-12" />

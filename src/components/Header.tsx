@@ -49,7 +49,6 @@ export default function Header() {
   const fetchGlobalData = async () => {
     const { data } = await axios.get(GlobalData(), options)
     dispatch(setGlobalData(data));
-    console.log(data.data);
   }
   useEffect(() => {
     fetchGlobalData()
