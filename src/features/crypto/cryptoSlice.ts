@@ -4,11 +4,12 @@ interface cryptoState {
   currency: string,
   symbol: string | null,
   trendingCoins: any[],
+  trendingSearchCoins: any[],
   allCoins: any[],
   coin: {
     [key: string]: any
   },
-  loading: { allCoins: boolean, trendingCoins: boolean, singleCoin: boolean },
+  loading: { allCoins: boolean, trendingCoins: boolean, trendingSearchCoins: boolean, singleCoin: boolean },
   page: number,
   search: string,
   globalData: {
@@ -20,9 +21,10 @@ const initialState: cryptoState = {
   currency: "USD",
   symbol: "$",
   trendingCoins: [],
+  trendingSearchCoins: [],
   allCoins: [],
   coin: {},
-  loading: { allCoins: false, trendingCoins: false, singleCoin: false },
+  loading: { allCoins: false, trendingCoins: false, trendingSearchCoins: false, singleCoin: false },
   page: 1,
   search: "",
   globalData: {},
@@ -41,6 +43,9 @@ const cryptoSlice = createSlice({
     setTrendingCoins: (state, action: PayloadAction<[]>) => {
       state.trendingCoins = action.payload;
     },
+    setTrendingSearchCoins: (state, action: PayloadAction<[]>) => {
+      state.trendingSearchCoins = action.payload;
+    },
     setAllCoins: (state, action: PayloadAction<[]>) => {
       state.allCoins = action.payload;
     },
@@ -52,6 +57,9 @@ const cryptoSlice = createSlice({
     },
     setTrendingCoinsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading.trendingCoins = action.payload;
+    },
+    setTrendingSearchCoinsLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading.trendingSearchCoins = action.payload;
     },
     setSingleCoinLoading: (state, action: PayloadAction<boolean>) => {
       state.loading.singleCoin = action.payload;
@@ -72,10 +80,12 @@ export const {
   setCurrency,
   setSymbol,
   setTrendingCoins,
+  setTrendingSearchCoins,
   setAllCoins,
   setCoin,
   setAllCoinsLoading,
   setTrendingCoinsLoading,
+  setTrendingSearchCoinsLoading,
   setSingleCoinLoading,
   setPage,
   setSearch,

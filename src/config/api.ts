@@ -13,6 +13,9 @@ export const TrendingCoins = (currency : string) =>
 export const GlobalData = () =>
   `https://api.coingecko.com/api/v3/global`;
 
+export const TrendingSearchList = () =>
+  `https://api.coingecko.com/api/v3/search/trending`;
+
 export const options = {
   method: 'GET',
   headers: {

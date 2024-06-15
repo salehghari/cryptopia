@@ -15,6 +15,7 @@ import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { parseISO, format, differenceInMonths  } from 'date-fns';
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 
@@ -97,10 +98,12 @@ export default function CoinPage() {
       {!loading && 
         <div className="lg:overflow-y-auto lg:h-screen flex max-lg:flex-col max-lg:items-center pt-16">
           <div className="w-[40%] flex flex-col items-center mt-6 max-lg:w-full">
-            <img
-              src={ coin.image?.large }
-              alt={ coin.name }
-              className="mb-5 h-[200px]"
+            <Image
+              src={coin.image?.large}
+              alt={coin.name}
+              className="mb-5"
+              width={200}
+              height={200}
             />
             <Typography variant="h3" className="font-bold mb-5 text-center">
               { coin.name }

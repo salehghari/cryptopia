@@ -14,6 +14,14 @@
   -webkit-tap-highlight-color: transparent;
   --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
 }
+.item-container {
+  max-height: 224px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.item-container.expanded {
+  max-height: 1000px;
+}
 text {
   pointer-events: none;
 }

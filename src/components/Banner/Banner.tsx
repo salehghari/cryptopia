@@ -6,6 +6,7 @@ import { RootState } from "@/app/store";
 import CountUp from 'react-countup';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import "chart.js/auto";
+import TrendingSearchCoins from "../TrendingSearchCoins";
 
 
 export default function Banner() {
@@ -139,6 +140,7 @@ export default function Banner() {
           />
         </div>
       </Container>
+      <TrendingSearchCoins />
     </>
   )
 }

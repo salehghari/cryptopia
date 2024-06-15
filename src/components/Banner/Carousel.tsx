@@ -9,6 +9,8 @@ import { RootState } from "@/app/store";
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { CircularProgress } from "@mui/material";
+import Image from 'next/image';
+
 
 
 export function separator(number: number) {
@@ -67,15 +69,17 @@ export default function Carousel() {
     let profit = trendingCoin.price_change_percentage_24h >= 0;
     return (
       <Link key={trendingCoin.name} className="flex flex-col items-center justify-between cursor-pointer uppercase text-white h-[135px]" href={`/coins/${trendingCoin.id}`}>
-        <img
-          className="mb-2 h-20 w-20"
+        <Image
+          className="mb-2 h-20 w-auto"
           src={trendingCoin?.image}
           alt={trendingCoin.name}
+          width={80}
+          height={80}
         />
         <>
-          <span>{trendingCoin?.symbol}
+          <span className="font-medium">{trendingCoin?.symbol}
             &nbsp;
-            <span className={profit ? `text-green-500` : `text-red-500`}>
+            <span className={`${profit ? "text-green-500" : "text-red-500"}`}>
               {profit && <ArrowDropUpRoundedIcon className="mr-[-4px]" />}
               {!profit && <ArrowDropDownRoundedIcon className="mr-[-4px]" />}
               {trendingCoin?.price_change_percentage_24h?.toFixed(2)

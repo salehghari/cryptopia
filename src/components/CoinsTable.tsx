@@ -10,6 +10,7 @@ import { separator } from './Banner/Carousel';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
+import Image from 'next/image';
 
 export const orderNumber = (number: number, forChart: boolean = false) => {
   let numStr = number?.toString();
@@ -222,7 +223,7 @@ export default function CoinsTable() {
                 <TableRow>
                   {tableRowItems.map(tableRowItem => (
                     <TableCell
-                      className="text-white text-lg max-sm:text-base font-bold cursor-pointer hover:bg-[#064f94] transition-colors"
+                      className={`text-white text-lg max-sm:text-base font-bold cursor-pointer hover:bg-[#064f94] transition-colors ${tableRowItem.text === "#" ? "w-[69px]" : ""}`}
                       onClick={() => handleSort(tableRowItem.sortBy)}
                       sx={{
                         whiteSpace: 'nowrap',
@@ -259,18 +260,18 @@ export default function CoinsTable() {
                       key={row.id}
                     >
                       <TableCell
-                        className="text-lg font-bold"
+                        className="text-lg max-sm:text-sm font-bold"
                       >
-                        {is1stRank && <div style={{color : "#ffd900"}}>{row.market_cap_rank}</div>}
-                        {is2ndRank && <div style={{color : "#c2d1dd"}}>{row.market_cap_rank}</div>}
-                        {is3rdRank && <div style={{color : "#e5ae7c"}}>{row.market_cap_rank}</div>}
-                        {anyRank && <div style={{color : "#fff"}}>{row.market_cap_rank}</div>}
+                        {is1stRank && <div style={{color: "#ffd900"}}>{row.market_cap_rank}</div>}
+                        {is2ndRank && <div style={{color: "#c2d1dd"}}>{row.market_cap_rank}</div>}
+                        {is3rdRank && <div style={{color: "#e5ae7c"}}>{row.market_cap_rank}</div>}
+                        {anyRank && <div style={{color: "#fff"}}>{row.market_cap_rank}</div>}
                         {!row.market_cap_rank && "-"}
                       </TableCell>
                       <TableCell 
                         className="flex gap-4 max-sm:gap-2 text-white text-lg max-sm:text-xs font-bold"
                       >
-                        <img src={row?.image} alt={row.name} className="h-12" />
+                        <Image src={row?.image} alt={row.name} width={48} height={48} className="h-12" />
                         <div className="flex flex-col max-sm:w-32">
                           <span className="uppercase text-lg">{row.symbol}</span>
                           <span className="text-gray-500">{row.name}</span>
