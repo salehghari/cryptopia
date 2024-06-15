@@ -26,8 +26,8 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Head>
         <title>{pageTitle}</title>
-        {/* <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon.png" /> */}
+        <link rel="icon" href="/favicon.ico" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
       </Head>
       <div className="App primary-bg min-h-screen text-white">
         <Header />

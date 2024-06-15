@@ -1,13 +1,13 @@
 import { useParams } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCoin, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
+import { setCoin, setSingleCoinError, setSingleCoinLoading } from "@/features/crypto/cryptoSlice";
 import { RootState } from '@/app/store';
 import axios from 'axios';
 import Head from 'next/head';
 import { SingleCoin, options } from '@/config/api';
 import { useEffect, useState } from 'react';
 import CoinInfo from '@/components/CoinInfo';
-import { CircularProgress, Typography, Button } from '@mui/material';
+import { Container, CircularProgress, Typography, Button } from '@mui/material';
 import HTMLReactParser from 'html-react-parser';
 import { separator } from '@/components/Banner/Carousel';
 import { orderNumber } from '@/components/CoinsTable';
@@ -16,6 +16,8 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { parseISO, format, differenceInMonths  } from 'date-fns';
 import Link from 'next/link';
 import Image from 'next/image';
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
+
 
 
 
@@ -32,6 +34,8 @@ export default function CoinPage() {
   const currency = useSelector((state: RootState) => state.crypto.currency);
   const symbol = useSelector((state: RootState) => state.crypto.symbol);
   const loading = useSelector((state: RootState) => state.crypto.loading.singleCoin);
+  const singleCoinError = useSelector((state: RootState) => state.crypto.singleCoinError);
+
 
   const coinMarketCap = coin?.market_data?.market_cap[currency.toLowerCase()];
   const coinTotalVolume = coin?.market_data?.total_volume[currency.toLowerCase()];
@@ -65,13 +69,22 @@ export default function CoinPage() {
 
   const fetchCoin = async () => {
     dispatch(setSingleCoinLoading(true));
-    if(id) {
-      const { data } = await axios.get(SingleCoin(id), options)
-      dispatch(
-        setCoin(data)
-      )
-      dispatch(setSingleCoinLoading(false));
+
+    try {
+      if (id) {
+        const { data } = await axios.get(SingleCoin(id), options);
+        dispatch(
+          setCoin(data)
+        );
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        dispatch(setSingleCoinError(`Coin not found. The coin with ID "${id}" was not found.`));
+      } else {
+        dispatch(setSingleCoinError('An error occurred'));
+      }
     }
+    dispatch(setSingleCoinLoading(false));
   }
   
 
@@ -79,7 +92,16 @@ export default function CoinPage() {
     fetchCoin();
   }, [id])
   
-
+  if (singleCoinError) {
+    return (
+      <Container className="flex flex-col justify-center items-center h-screen">
+        <div className="flex items-center gap-3 bg-gray-800 p-5 rounded">
+          <ErrorOutlineRoundedIcon />
+          <p className="mx-auto">{singleCoinError}</p>
+        </div>
+      </Container>
+    );
+  }
   
   return (
     <>
@@ -105,7 +127,7 @@ export default function CoinPage() {
               width={200}
               height={200}
             />
-            <Typography variant="h3" className="font-bold mb-5 text-center">
+            <Typography variant="h3" className="font-bold mb-5 text-center text-4xl max-sm:text-3xl">
               { coin.name }
             </Typography>
             <Typography variant="subtitle1" className="w-full p-6 pb-4 pt-0 text-justify" style={{fontFamily: "Montserrat"}}>
