@@ -7,12 +7,20 @@ import CountUp from 'react-countup';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import "chart.js/auto";
 import TrendingSearchCoins from "../TrendingSearchCoins";
+import { orderNumber } from "../CoinsTable";
+import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 
 
 export default function Banner() {
-  const [data, setData] = useState({active_cryptocurrencies: 0, markets: 0, ended_icos: 0});
+  interface IData {
+    [key: string]: any
+  }
+  const [data, setData] = useState<IData>({active_cryptocurrencies: 0, total_market_cap: "", markets: 0, ended_icos: 0});
 
   const globalData = useSelector((state: RootState) => state.crypto.globalData);
+  const profit = data?.market_cap_change_percentage_24h_usd > 0;
+
 
   interface CryptoData {
     id: string;
@@ -63,12 +71,24 @@ export default function Banner() {
           <Carousel />
         </Container>
       </div>
+      {data?.total_market_cap?.usd && data?.market_cap_change_percentage_24h_usd && <Container className="flex justify-center mt-8">
+        <Typography data-editorial-content-target="description" className="text-lg font-medium text-gray-400" variant="h2">
+          The global cryptocurrency market cap today is ${orderNumber(data?.total_market_cap?.usd)}, a 
+          <span className={`${ profit ? "text-[#32ca5b]" : "text-[#ff3a33]"}`}>
+            {profit && <ArrowDropUpRoundedIcon className="-mr-1" />}
+            {!profit && <ArrowDropDownRoundedIcon className="-mr-1" />}
+            {data?.market_cap_change_percentage_24h_usd?.toFixed(2).toString().replace("-", "")}
+            %&nbsp;
+          </span>
+          change in the last 24 hours.
+        </Typography>
+      </Container>}
       <Container className="flex justify-center max-sm:flex-col my-8">
         {data?.active_cryptocurrencies === 0 || !data && 
           <div className="bg-gray-900 w-full h-44 max-sm:h-[340px] rounded-lg"></div>
         }
         {data?.active_cryptocurrencies !== 0 && data &&
-          <>
+          <> 
             <div className="flex flex-col gap-1 justify-center items-center py-5 px-12 sm:my-8 sm:border-r-2 text-center border-[#ffffff4d] max-sm:mx-8 max-sm:border-b-2">
               <Typography variant="h4" className="text-[#4d97d3] text-4xl">
                 <CountUp start={0} end={Math.floor(data?.active_cryptocurrencies / 10) * 10} duration={2} delay={0.5} />+

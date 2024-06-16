@@ -13,7 +13,7 @@ import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import Image from 'next/image';
 
 export const orderNumber = (number: number, forChart: boolean = false) => {
-  let numStr = number?.toString();
+  let numStr = number?.toFixed()?.toString();
 
   if(number >= 10000000000000) {
     // 10^12 => 1,000B
@@ -153,8 +153,6 @@ export default function CoinsTable() {
     }
     setSortConfig({ key, direction });
   };
-
-  const filteredCoins = handleSearch();
 
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
